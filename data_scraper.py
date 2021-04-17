@@ -27,7 +27,7 @@ def openyocket(URL,credentials):
     time.sleep(1)
     driver.find_element_by_name('email').send_keys(credentials['username'])
     time.sleep(1)
-    driver.find_element_by_name('password').send_keys(credentials['pass'])
+    driver.find_element_by_name('password').send_keys(credentials['password'])
 
 def search_universities():
     cha = ["University of waterloo"]
@@ -177,8 +177,23 @@ def deep_scrape():
 		driver.find_elements_by_class_name("btn.btn-default")[-1].send_keys("\n")
 		
 if __name__=='__main__':
-    credentials = {'username' : 'jayen128@hotmail.com\n', 'pass' : 'getdatabigdata\n'}
-    openyocket(URL,credentials)
+    
+    HOME = r'C:\Users\Cosmos\Documents\Jayen\Pre MS\Big Game\Yocket Analysis'
+    with open(os.path.join(HOME,'config.json'),'r') as f:
+    	meta_data = json.load(f)
+    f.close()
+    if meta_data['csv']=="None":
+    	raw_data = pd.DataFrame(columns = ['Student_name','gre','ielts_toefl','work_exp','papers','ug_college_name_location','ug_degree','ug_pct_cgpa',
+									'ms_college_name','ms_college_course','ms_college_decision_status',';la'])
+    	raw_data.to_csv("Raw_Data.csv",index=False)
+    	meta_data['csv']="Raw_Data.csv"
+    	with open(os.path.join(HOME,'config.json'),'w') as f:
+    		f.write(json.dumps(meta_data))
+    	f.close()
+    else:
+    	raw_data = pd.read_csv(os.path.join(HOME,meta_data['csv']))
+    print(raw_data)
+    openyocket(URL,meta_data['credentials'])
     time.sleep(2)
     # search_universities()
     # scrape_data()
